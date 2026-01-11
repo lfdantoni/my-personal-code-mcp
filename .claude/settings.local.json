@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh issue create:*)",
+      "mcp__github__get_me",
+      "Bash(git remote:*)",
+      "mcp__github__issue_write",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(set SKILLS_REPO_OWNER=lfdantoni)",
+      "Bash(set SKILLS_REPO_NAME=my-skills-repo:*)",
+      "Bash(set SKILLS_PATH=skills)",
+      "Bash(npx tsx:*)",
+      "Bash($env:SKILLS_REPO_OWNER=\"lfdantoni\")",
+      "Bash($env:SKILLS_REPO_NAME=\"my-skills-repo\")",
+      "Bash($env:SKILLS_PATH=\"skills\")",
+      "Bash(export SKILLS_REPO_OWNER=lfdantoni)",
+      "Bash(export SKILLS_REPO_NAME=my-skills-repo)",
+      "Bash(export SKILLS_PATH=skills)",
+      "mcp__github__get_file_contents",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nImplement MCP server for skills from GitHub repository\n\n- Add MCP server with stdio transport using @modelcontextprotocol/sdk\n- Implement list_skills tool to fetch skill names from GitHub repo\n- Implement get_skill tool to retrieve skill content by name\n- Add GitHubService with error handling for API calls\n- Configure TypeScript build with ES modules\n- Add documentation with Cursor, Claude Desktop, and CLI examples\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}

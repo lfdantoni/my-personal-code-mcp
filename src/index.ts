@@ -7,6 +7,8 @@ import {
   handleListSkills,
   getSkillSchema,
   handleGetSkill,
+  getSkillsSchema,
+  handleGetSkills,
 } from "./tools/index.js";
 
 const server = new McpServer({
@@ -56,6 +58,28 @@ server.registerTool(
       const result = await handleGetSkill(githubService, input);
       return {
         content: [{ type: "text", text: result.content }],
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return {
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+server.registerTool(
+  "get_skills",
+  {
+    description: "Returns the content of multiple best practice skills",
+    inputSchema: getSkillsSchema,
+  },
+  async (input) => {
+    try {
+      const result = await handleGetSkills(githubService, input);
+      return {
+        content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
