@@ -1,10 +1,14 @@
-import { z } from "zod";
 import { GitHubService, GitHubServiceError } from "../services/github.js";
 
 export const listSkillsSchema = {};
 
+export interface SkillInfo {
+  name: string;
+  description?: string;
+}
+
 export interface ListSkillsResult {
-  skills: string[];
+  skills: SkillInfo[];
 }
 
 export async function handleListSkills(
@@ -12,7 +16,10 @@ export async function handleListSkills(
 ): Promise<ListSkillsResult> {
   try {
     const files = await githubService.listSkillFiles();
-    const skills = files.map((file) => file.name);
+    const skills = files.map((file) => ({
+      name: file.name,
+      ...(file.description && { description: file.description }),
+    }));
     return { skills };
   } catch (error) {
     if (error instanceof GitHubServiceError) {

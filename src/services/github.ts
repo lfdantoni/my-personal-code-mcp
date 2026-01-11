@@ -3,6 +3,17 @@ import { Octokit } from "octokit";
 export interface SkillFile {
   name: string;
   path: string;
+  description?: string;
+}
+
+interface SkillIndexEntry {
+  name: string;
+  path: string;
+  description: string;
+}
+
+interface SkillIndex {
+  skills: SkillIndexEntry[];
 }
 
 export class GitHubServiceError extends Error {
@@ -37,6 +48,57 @@ export class GitHubService {
   }
 
   async listSkillFiles(): Promise<SkillFile[]> {
+    // Try to fetch index.json first
+    const indexResult = await this.tryGetSkillIndex();
+    if (indexResult) {
+      return indexResult;
+    }
+
+    // Fall back to directory listing
+    return this.listSkillFilesFromDirectory();
+  }
+
+  private async tryGetSkillIndex(): Promise<SkillFile[] | null> {
+    const indexPath = this.skillsPath
+      ? `${this.skillsPath}/index.json`
+      : "index.json";
+
+    try {
+      const response = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: indexPath,
+      });
+
+      if (Array.isArray(response.data) || response.data.type !== "file") {
+        return null;
+      }
+
+      if (!("content" in response.data)) {
+        return null;
+      }
+
+      const content = Buffer.from(response.data.content, "base64").toString(
+        "utf-8"
+      );
+      const index: SkillIndex = JSON.parse(content);
+
+      if (!index.skills || !Array.isArray(index.skills)) {
+        return null;
+      }
+
+      return index.skills.map((skill) => ({
+        name: skill.name,
+        path: this.skillsPath ? `${this.skillsPath}/${skill.path}` : skill.path,
+        description: skill.description,
+      }));
+    } catch {
+      // index.json doesn't exist or is invalid, fall back to directory listing
+      return null;
+    }
+  }
+
+  private async listSkillFilesFromDirectory(): Promise<SkillFile[]> {
     try {
       const response = await this.octokit.rest.repos.getContent({
         owner: this.owner,

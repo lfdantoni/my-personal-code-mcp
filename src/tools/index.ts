@@ -2,6 +2,7 @@ export {
   listSkillsSchema,
   handleListSkills,
   type ListSkillsResult,
+  type SkillInfo,
 } from "./list-skills.js";
 
 export {
